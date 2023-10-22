@@ -1,6 +1,6 @@
-# An Entropy-based Refining Strategy for Inverse Protein Folding with Global Graph Attention
+# ProRefiner: An Entropy-based Refining Strategy for Inverse Protein Folding with Global Graph Attention
 
-This is a demo code for paper An Entropy-based Refining Strategy for Inverse Protein Folding with Global Graph Attention. You can also run the demo online through [Colab](https://colab.research.google.com/drive/1a6VW-BB0twEwL65sE_dUAM42wdSm6RZp?usp=sharing) or [Code Ocean](https://codeocean.com/capsule/7d2d57dd-96ec-48aa-9e3f-8f4a0b7d0150/) for easier environment setup. 
+This is a demo code for paper ProRefiner: An Entropy-based Refining Strategy for Inverse Protein Folding with Global Graph Attention. You can also run the demo online through [Colab](https://colab.research.google.com/drive/1a6VW-BB0twEwL65sE_dUAM42wdSm6RZp?usp=sharing) or [Code Ocean](https://codeocean.com/capsule/9492154/tree) for easier environment setup. 
 
 ## File structure
 We provide the ProRefiner implementation in folder `model`. We put the code provided by [ProteinMPNN](https://github.com/dauparas/ProteinMPNN) in folder `ProteinMPNN`. `run.py` contains the sequence design pipeline.
