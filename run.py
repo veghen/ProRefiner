@@ -68,9 +68,9 @@ if __name__ == "__main__":
     model.eval()
 
     # parse pdb and design shell
-    pdb_code = sys.argv[1]
+    pdb_code_or_path = sys.argv[1]
     chain_code = (sys.argv[2]).upper()
-    data = [get_pdb(pdb_code, chain_code), ]
+    data = [get_pdb(pdb_code_or_path, chain_code), ]
     if len(sys.argv) > 3:
         design_shell = sys.argv[3]
         design_shell = [int(i) for i in design_shell.strip().split(',')]
@@ -86,12 +86,13 @@ if __name__ == "__main__":
     nssr_bl = compute_nssr(S_base, S_gt, mask_design)
 
     seq_recovery_rate = compute_rec(S, S_gt, mask_design)
-    nssr = compute_nssr(S, S_gt, mask_design)
+    nssr = compute_nssr(S, S_gt, mask_design)   
 
-    print("\nDesign {} residues from {} chain {} (ignore residues without coordinates)\n".format(mask_design.sum().item(), pdb_code, chain_code))
+    print("\nRecovery and nssr are computed based on designable residues with coordinates only.")
+    print("\nDesign {} residues from {} chain {} with length {}\n".format(mask_design.sum().item(), pdb_code_or_path, chain_code, len(S_gt[0])))
     print("native sequence:")
-    print(tostr(S_gt[mask_design]))
+    print(tostr(S_gt[0]))
     print("\nsequence by ProteinMPNN: (recovery: {:.3f}\tnssr: {:.3f})".format(seq_recovery_rate_bl * 100., nssr_bl * 100.))
-    print(tostr(S_base[mask_design]))
+    print(tostr(S_base[0]))
     print("\nsequence by {}: (recovery: {:.3f}\tnssr: {:.3f})".format(our_model_name, seq_recovery_rate * 100., nssr * 100.))
-    print(tostr(S[mask_design]))
+    print(tostr(S[0]))

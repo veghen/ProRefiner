@@ -1,3 +1,4 @@
+import os
 import requests
 import numpy as np
 import torch
@@ -37,14 +38,24 @@ def parse_chain(c, b_factor = False, v = False):
     return True, seq, coords
 
 
-def get_pdb(pdb_code, chain = "A"):
-    r = requests.get("https://files.rcsb.org/view/{}.pdb".format(pdb_code))
-    open(pdb_code + ".pdb", 'wb').write(r.content)
+def get_pdb(pdb_code_or_path, chain = "A"):
+    if os.path.exists(pdb_code_or_path):
+        pdb_code = pdb_code_or_path
+        pdb_path = pdb_code_or_path
+    else:
+        pdb_code = pdb_code_or_path
+        pdb_path = pdb_code + ".pdb"
+        r = requests.get("https://files.rcsb.org/view/{}.pdb".format(pdb_code))
+        if r.status_code == 200:
+            open(pdb_path, 'wb').write(r.content)
+        else:
+            print("Please provide a valid PDB code or PDB file path.")
+            exit(0)
 
     p = PDBParser(PERMISSIVE=1)
-    s = p.get_structure(pdb_code, pdb_code + ".pdb")
+    s = p.get_structure(pdb_code, pdb_path)
 
-    # get the first chain from the first model
+    # get the chain from the first model
     try:
         c = s[0][chain]
     except:
