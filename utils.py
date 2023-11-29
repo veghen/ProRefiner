@@ -72,6 +72,8 @@ def get_pdb(pdb_code_or_path, chain = "A"):
     d["coords"] = coords
     assert len(seq) == len(coords["CA"])
 
+    print("Read {} chain {} with length {}".format(pdb_code, chain, len(seq)))
+
     return d
 
 

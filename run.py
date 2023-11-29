@@ -19,14 +19,14 @@ def run_one_batch_partial(batch, device, design_shell):
     mask_design = torch.zeros_like(mask)
     design_shell = torch.tensor(design_shell, device = device) - 1
     mask_design[0, design_shell] = 1.
-    mask_design = mask_design * mask
-    S_env[((1 - mask_design) * mask).bool()] = S_gt[((1 - mask_design) * mask).bool()]
+    S_env[(1 - mask_design).bool()] = S_gt[(1 - mask_design).bool()]
 
-    S_sample, _ = run_proteinmpnn(batch, device, 1e-3, mask_visible = (1 - mask_design) * mask, S_env = torch.clamp(S_env, min = 0))
-    log_probs = model(X, torch.clamp(S_env, min = 0), mask, residue_idx, chain_encoding_all, mask_visible = (1 - mask_design) * mask)
+    S_sample, _ = run_proteinmpnn(batch, device, 1e-3, mask_visible = 1 - mask_design, S_env = torch.clamp(S_env, min = 0))
+    log_probs = model(X, torch.clamp(S_env, min = 0), mask, residue_idx, chain_encoding_all, mask_visible = 1 - mask_design)
+    S = torch.argmax(log_probs, dim = -1)
+    S[(1 - mask_design).bool()] = S_gt[(1 - mask_design).bool()]
     
-
-    return S_gt, S_sample, torch.argmax(log_probs, dim = -1), mask_design.bool()
+    return S_gt, S_sample, S, (mask_design * mask).bool()
 
 
 def run_one_batch_entire(batch, device):
@@ -88,8 +88,7 @@ if __name__ == "__main__":
     seq_recovery_rate = compute_rec(S, S_gt, mask_design)
     nssr = compute_nssr(S, S_gt, mask_design)   
 
-    print("\nRecovery and nssr are computed based on designable residues with coordinates only.")
-    print("\nDesign {} residues from {} chain {} with length {}\n".format(mask_design.sum().item(), pdb_code_or_path, chain_code, len(S_gt[0])))
+    print("Recovery and nssr are computed based on designable residues with coordinates ({} residues).\n".format(mask_design.sum().item()))
     print("native sequence:")
     print(tostr(S_gt[0]))
     print("\nsequence by ProteinMPNN: (recovery: {:.3f}\tnssr: {:.3f})".format(seq_recovery_rate_bl * 100., nssr_bl * 100.))
